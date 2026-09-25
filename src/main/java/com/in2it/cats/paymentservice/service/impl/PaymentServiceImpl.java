@@ -1,6 +1,8 @@
 package com.in2it.cats.paymentservice.service.impl;
 
+import com.in2it.cats.paymentservice.client.NotificationClient;
 import com.in2it.cats.paymentservice.constant.PaymentConstants;
+import com.in2it.cats.paymentservice.dto.NotificationRequestDTO;
 import com.in2it.cats.paymentservice.dto.PaymentRequestDTO;
 import com.in2it.cats.paymentservice.dto.PaymentResponseDTO;
 import com.in2it.cats.paymentservice.entity.Payment;
@@ -17,6 +19,7 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final NotificationClient notificationClient;
 
     @Override
     public PaymentResponseDTO createPayment(
@@ -32,6 +35,17 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment savedPayment =
                 paymentRepository.save(payment);
+
+        NotificationRequestDTO notificationRequest =
+                new NotificationRequestDTO(
+                        savedPayment.getUserId(),
+                        savedPayment.getOrderId(),
+                        "PAYMENT_CREATED",
+                        "Your payment has been created successfully",
+                        "EMAIL"
+                );
+
+        notificationClient.createNotification(notificationRequest);
 
         return PaymentResponseDTO.builder()
                 .id(savedPayment.getId())
