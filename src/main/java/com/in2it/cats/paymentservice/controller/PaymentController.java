@@ -39,7 +39,7 @@ public class PaymentController {
     }
 
     @Operation(summary = "${payment.getAll}")
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<ResponseDTO> getAllPayments() {
 
         List<PaymentResponseDTO> data = paymentService.getAllPayments();
