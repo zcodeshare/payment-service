@@ -16,71 +16,50 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PaymentNotFoundException.class)
-    public ResponseEntity<ResponseDTO> handlePaymentNotFound(
-            PaymentNotFoundException exception) {
+    public ResponseEntity<ResponseDTO> handlePaymentNotFound(PaymentNotFoundException exception) {
 
-        CustomErrorResponseDTO errorInfo =
-                new CustomErrorResponseDTO(
+        CustomErrorResponseDTO errorInfo = new CustomErrorResponseDTO(
                         "PAYMENT_NOT_FOUND",
                         PaymentConstants.PAYMENT_NOT_FOUND,
-                        "No payment exists with the given id: "
-                                + exception.getMessage()
+                        exception.getMessage()
                 );
 
-        ResponseDTO response =
-                new ResponseDTO(false, null, errorInfo);
+        ResponseDTO response = new ResponseDTO(false, null, errorInfo);
 
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseDTO> handleValidation(
-            MethodArgumentNotValidException exception) {
+    public ResponseEntity<ResponseDTO> handleValidation(MethodArgumentNotValidException exception) {
 
         Map<String, String> errors = new HashMap<>();
 
         exception.getBindingResult()
                 .getFieldErrors()
-                .forEach(error ->
-                        errors.put(
-                                error.getField(),
-                                error.getDefaultMessage()
-                        )
-                );
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-        CustomErrorResponseDTO errorInfo =
-                new CustomErrorResponseDTO(
+        CustomErrorResponseDTO errorInfo = new CustomErrorResponseDTO(
                         "VALIDATION_ERROR",
                         PaymentConstants.VALIDATION_ERROR,
                         errors.toString()
                 );
 
-        ResponseDTO response =
-                new ResponseDTO(false, null, errorInfo);
+        ResponseDTO response = new ResponseDTO(false, null, errorInfo);
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDTO> handleGenericException(
-            Exception exception) {
+    public ResponseEntity<ResponseDTO> handleGenericException(Exception exception) {
 
-        CustomErrorResponseDTO errorInfo =
-                new CustomErrorResponseDTO(
+        CustomErrorResponseDTO errorInfo = new CustomErrorResponseDTO(
                         "INTERNAL_SERVER_ERROR",
                         PaymentConstants.INTERNAL_SERVER_ERROR,
                         exception.getMessage()
                 );
 
-        ResponseDTO response =
-                new ResponseDTO(false, null, errorInfo);
+        ResponseDTO response = new ResponseDTO(false, null, errorInfo);
 
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

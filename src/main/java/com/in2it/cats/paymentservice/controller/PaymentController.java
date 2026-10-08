@@ -22,31 +22,19 @@ public class PaymentController {
 
     @Operation(summary = "${payment.create}")
     @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> createPayment(
-            @Valid @RequestBody PaymentRequestDTO request) {
+    public ResponseEntity<ResponseDTO> createPayment(@Valid @RequestBody PaymentRequestDTO request) {
 
-        PaymentResponseDTO data =
-                paymentService.createPayment(request);
-
-        ResponseDTO response =
-                new ResponseDTO(true, data, null);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        PaymentResponseDTO data = paymentService.createPayment(request);
+        ResponseDTO response = new ResponseDTO(true, data, null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "${payment.getById}")
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO> getPaymentById(
-            @PathVariable String id) {
+    public ResponseEntity<ResponseDTO> getPaymentById(@PathVariable String id) {
 
-        PaymentResponseDTO data =
-                paymentService.getPaymentById(id);
-
-        ResponseDTO response =
-                new ResponseDTO(true, data, null);
-
+        PaymentResponseDTO data = paymentService.getPaymentById(id);
+        ResponseDTO response = new ResponseDTO(true, data, null);
         return ResponseEntity.ok(response);
     }
 
@@ -54,40 +42,26 @@ public class PaymentController {
     @GetMapping
     public ResponseEntity<ResponseDTO> getAllPayments() {
 
-        List<PaymentResponseDTO> data =
-                paymentService.getAllPayments();
-
-        ResponseDTO response =
-                new ResponseDTO(true, data, null);
-
+        List<PaymentResponseDTO> data = paymentService.getAllPayments();
+        ResponseDTO response = new ResponseDTO(true, data, null);
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "${payment.update}")
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseDTO> updatePayment(
-            @PathVariable String id,
-            @Valid @RequestBody PaymentRequestDTO request) {
+    public ResponseEntity<ResponseDTO> updatePayment(@PathVariable String id, @Valid @RequestBody PaymentRequestDTO request) {
 
-        PaymentResponseDTO data =
-                paymentService.updatePayment(id, request);
-
-        ResponseDTO response =
-                new ResponseDTO(true, data, null);
-
+        PaymentResponseDTO data = paymentService.updatePayment(id, request);
+        ResponseDTO response = new ResponseDTO(true, data, null);
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "${payment.delete}")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDTO> deletePayment(
-            @PathVariable String id) {
+    public ResponseEntity<ResponseDTO> deletePayment(@PathVariable String id) {
 
         paymentService.deletePayment(id);
-
-        ResponseDTO response =
-                new ResponseDTO(true, null, null);
-
+        ResponseDTO response = new ResponseDTO(true, null, null);
         return ResponseEntity.ok(response);
     }
 }

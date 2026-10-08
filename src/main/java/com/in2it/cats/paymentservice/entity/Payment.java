@@ -18,14 +18,9 @@ public class Payment {
 
     @Id
     private String id;
-
     private String orderId;
-
     private String userId;
-
     private BigDecimal amount;
-
     private String paymentMethod;
-
     private String status;
 }

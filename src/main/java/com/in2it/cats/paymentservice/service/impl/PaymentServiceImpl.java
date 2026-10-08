@@ -1,8 +1,6 @@
 package com.in2it.cats.paymentservice.service.impl;
 
-import com.in2it.cats.paymentservice.client.NotificationClient;
 import com.in2it.cats.paymentservice.constant.PaymentConstants;
-import com.in2it.cats.paymentservice.dto.NotificationRequestDTO;
 import com.in2it.cats.paymentservice.dto.PaymentRequestDTO;
 import com.in2it.cats.paymentservice.dto.PaymentResponseDTO;
 import com.in2it.cats.paymentservice.entity.Payment;
@@ -19,11 +17,9 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final NotificationClient notificationClient;
 
     @Override
-    public PaymentResponseDTO createPayment(
-            PaymentRequestDTO request) {
+    public PaymentResponseDTO createPayment(PaymentRequestDTO request) {
 
         Payment payment = Payment.builder()
                 .orderId(request.getOrderId())
@@ -33,88 +29,79 @@ public class PaymentServiceImpl implements PaymentService {
                 .status(PaymentConstants.PAYMENT_PENDING)
                 .build();
 
-        Payment savedPayment =
-                paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        NotificationRequestDTO notificationRequest =
-                new NotificationRequestDTO(
-                        savedPayment.getUserId(),
-                        savedPayment.getOrderId(),
-                        "PAYMENT_CREATED",
-                        "Your payment has been created successfully",
-                        "EMAIL"
-                );
+        PaymentResponseDTO response = PaymentResponseDTO.builder()
+                        .id(savedPayment.getId())
+                        .orderId(savedPayment.getOrderId())
+                        .userId(savedPayment.getUserId())
+                        .amount(savedPayment.getAmount())
+                        .paymentMethod(savedPayment.getPaymentMethod())
+                        .status(savedPayment.getStatus())
+                        .build();
 
-        notificationClient.createNotification(notificationRequest);
-
-        return PaymentResponseDTO.builder()
-                .id(savedPayment.getId())
-                .orderId(savedPayment.getOrderId())
-                .userId(savedPayment.getUserId())
-                .amount(savedPayment.getAmount())
-                .paymentMethod(savedPayment.getPaymentMethod())
-                .status(savedPayment.getStatus())
-                .build();
+        return response;
     }
 
     @Override
     public PaymentResponseDTO getPaymentById(String id) {
 
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() ->
-                        new PaymentNotFoundException(id));
+                .orElseThrow(() -> new PaymentNotFoundException(id));
 
-        return PaymentResponseDTO.builder()
-                .id(payment.getId())
-                .orderId(payment.getOrderId())
-                .userId(payment.getUserId())
-                .amount(payment.getAmount())
-                .paymentMethod(payment.getPaymentMethod())
-                .status(payment.getStatus())
-                .build();
-    }
-
-    @Override
-    public List<PaymentResponseDTO> getAllPayments() {
-
-        return paymentRepository.findAll()
-                .stream()
-                .map(payment -> PaymentResponseDTO.builder()
+        PaymentResponseDTO response = PaymentResponseDTO.builder()
                         .id(payment.getId())
                         .orderId(payment.getOrderId())
                         .userId(payment.getUserId())
                         .amount(payment.getAmount())
                         .paymentMethod(payment.getPaymentMethod())
                         .status(payment.getStatus())
-                        .build())
-                .toList();
+                        .build();
+
+        return response;
     }
 
     @Override
-    public PaymentResponseDTO updatePayment(
-            String id,
-            PaymentRequestDTO request) {
+    public List<PaymentResponseDTO> getAllPayments() {
+
+        List<PaymentResponseDTO> response = paymentRepository.findAll()
+                        .stream()
+                        .map(payment -> PaymentResponseDTO.builder()
+                                .id(payment.getId())
+                                .orderId(payment.getOrderId())
+                                .userId(payment.getUserId())
+                                .amount(payment.getAmount())
+                                .paymentMethod(payment.getPaymentMethod())
+                                .status(payment.getStatus())
+                                .build())
+                        .toList();
+
+        return response;
+    }
+
+    @Override
+    public PaymentResponseDTO updatePayment(String id, PaymentRequestDTO request) {
 
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() ->
-                        new PaymentNotFoundException(id));
+                .orElseThrow(() -> new PaymentNotFoundException(id));
 
         payment.setOrderId(request.getOrderId());
         payment.setUserId(request.getUserId());
         payment.setAmount(request.getAmount());
         payment.setPaymentMethod(request.getPaymentMethod());
 
-        Payment updatedPayment =
-                paymentRepository.save(payment);
+        Payment updatedPayment = paymentRepository.save(payment);
 
-        return PaymentResponseDTO.builder()
-                .id(updatedPayment.getId())
-                .orderId(updatedPayment.getOrderId())
-                .userId(updatedPayment.getUserId())
-                .amount(updatedPayment.getAmount())
-                .paymentMethod(updatedPayment.getPaymentMethod())
-                .status(updatedPayment.getStatus())
-                .build();
+        PaymentResponseDTO response = PaymentResponseDTO.builder()
+                        .id(updatedPayment.getId())
+                        .orderId(updatedPayment.getOrderId())
+                        .userId(updatedPayment.getUserId())
+                        .amount(updatedPayment.getAmount())
+                        .paymentMethod(updatedPayment.getPaymentMethod())
+                        .status(updatedPayment.getStatus())
+                        .build();
+
+        return response;
     }
 
     @Override
